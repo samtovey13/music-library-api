@@ -12,4 +12,6 @@ app.get("/", (req, res) => {
 
 app.post("/artists", artistControllers.create);
 
+app.get("/artists", artistControllers.list);
+
 module.exports = app;
