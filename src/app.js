@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 
 const artistControllers = require("./controllers/artists"); //controller function imported
+const albumControllers = require("./controllers/albums");
 
 app.use(express.json()); //middleware
 
@@ -19,5 +20,7 @@ app.get("/artists/:artistId", artistControllers.findById);
 app.patch("/artists/:id", artistControllers.updateArtist);
 
 app.delete("/artists/:id", artistControllers.deleteArtist);
+
+app.post("/artists/:artistId/albums", albumControllers.createAlbum);
 
 module.exports = app;
