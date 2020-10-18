@@ -24,6 +24,14 @@ describe('/albums', () => {
         name: 'Tame Impala',
         genre: 'Rock',
       });
+      artist2 = await Artist.create({
+        name: "Kylie Minogue", 
+        genre: "Pop",
+      });
+      artist3 = await Artist.create({
+        name: "Dave Brubeck", 
+        genre: "Jazz", 
+      });
     } catch (err) {
       console.log(err);
     }
@@ -40,9 +48,6 @@ describe('/albums', () => {
         .then((res) => {
           expect(res.status).to.equal(201);
           
-          
-          // done();
-
           Album.findByPk(res.body.id, { raw: true }).then((album) => {
             expect(album.name).to.equal('InnerSpeaker');
             expect(album.year).to.equal(2010);
@@ -68,6 +73,40 @@ describe('/albums', () => {
             done();
           });
         });
+    });
+
+    describe("with albums in the database", () => {
+      let albums;
+      beforeEach((done) => {
+        Promise.all([
+          request(app).post(`/artists/${artist.id}/albums`).send({ name: "InnerSpeaker", year: 2010 }),
+          request(app).post(`/artists/${artist2.id}/albums`).send({ name: "Fever", year: 2001 }),
+          request(app).post(`/artists/${artist3.id}/albums`).send({ name: "At Carnegie Hall", year: 1963 }),
+        ]).then((documents) => {
+          albums = documents.map(albumPromise => albumPromise.body);
+          done();
+        });
+      });
+
+      describe("GET /albums", () => {
+        it("gets all album records", (done) => {
+          request(app)
+            .get("/albums")
+            .then((res) => {
+              expect(res.status).to.equal(200);
+              expect(res.body.length).to.equal(3);
+              res.body.forEach((album) => {
+                const expected = albums.find((a) => a.id === album.id);
+                expect(album.name).to.equal(expected.name);
+                expect(album.year).to.equal(expected.year);
+                expect(album.artistId).to.equal(expected.artistId);
+              });
+              done();
+            });
+        });
+      });
+
+
     });
   });
 });
