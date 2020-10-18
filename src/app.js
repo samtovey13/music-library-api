@@ -25,4 +25,6 @@ app.post("/artists/:artistId/albums", albumControllers.createAlbum);
 
 app.get("/albums", albumControllers.getAlbums);
 
+app.get("/albums/:albumId", albumControllers.getAlbumById);
+
 module.exports = app;

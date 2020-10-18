@@ -106,6 +106,33 @@ describe('/albums', () => {
         });
       });
 
+      describe('GET /albums/:albumId', () => {
+        it('gets album record by id', (done) => {
+          const album = albums[0];
+          console.log(album.id);
+          request(app)
+            .get(`/albums/${album.id}`)
+            .then((res) => {
+              expect(res.status).to.equal(200);
+              expect(res.body.name).to.equal(album.name);
+              expect(res.body.year).to.equal(album.year);
+              expect(res.body.artistId).to.equal(album.artistId);
+              done();
+            });
+        });
+  
+        it('returns a 404 if the album does not exist', (done) => {
+          request(app)
+            .get('/albums/12345')
+            .then((res) => {
+              expect(res.status).to.equal(404);
+              expect(res.body.error).to.equal('The album could not be found.');
+              done();
+            });
+        });
+      });
+
+
 
     });
   });
