@@ -27,4 +27,6 @@ app.get("/albums", albumControllers.getAlbums);
 
 app.get("/albums/:albumId", albumControllers.getAlbumById);
 
+app.patch("/albums/:albumId", albumControllers.updateAlbum);
+
 module.exports = app;

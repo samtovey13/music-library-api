@@ -109,7 +109,6 @@ describe('/albums', () => {
       describe('GET /albums/:albumId', () => {
         it('gets album record by id', (done) => {
           const album = albums[0];
-          console.log(album.id);
           request(app)
             .get(`/albums/${album.id}`)
             .then((res) => {
@@ -132,6 +131,58 @@ describe('/albums', () => {
         });
       });
 
+      describe('PATCH /albums/:id', () => {
+        it('updates album name by id', (done) => {
+          const album = albums[0];
+          request(app)
+            .patch(`/albums/${album.id}`)
+            .send({ name: 'Fancy New Album Name' })
+            .then((res) => {
+              expect(res.status).to.equal(200);
+              Album.findByPk(album.id, { raw: true }).then((updatedAlbum) => {
+                expect(updatedAlbum.name).to.equal('Fancy New Album Name');
+                done();
+              });
+            });
+        });
+  
+        it('updates album year by id', (done) => {
+          const album = albums[0];
+          request(app)
+            .patch(`/albums/${album.id}`)
+            .send({ year: 2020 })
+            .then((res) => {
+              expect(res.status).to.equal(200);
+              Album.findByPk(album.id, { raw: true }).then((updatedAlbum) => {
+                expect(updatedAlbum.year).to.equal(2020);
+                done();
+              });
+            });
+        });
+  
+        it('returns a 404 if the album does not exist', (done) => {
+          request(app)
+            .patch(`/albums/1234`)
+            .send({ name: 'New Album Name' })
+            .then((res) => {
+              expect(res.status).to.equal(404);
+              expect(res.body.error).to.equal('The album could not be found.');
+              done();
+            });
+        });
+      
+        it('throws an error if updating to an artist that does not exist', (done) => {
+          const album = albums[0];
+          request(app)
+            .patch(`/albums/${album.id}`)
+            .send({ artistId: 9999 })
+            .then((res) => {
+              expect(res.status).to.equal(404);
+              expect(res.body.error).to.equal('The artist could not be found.');
+              done();
+            });
+        });
+      });
 
 
     });
