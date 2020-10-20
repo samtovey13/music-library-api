@@ -42,7 +42,7 @@ exports.updateAlbum = (req, res) => {
         if (!rowsUpdated) {
           res.status(404).json({ error: "The album could not be found."})
         } else {
-          res.status(200).json(rowsUpdated);
+          res.status(200).json({ result: "Rows were updated"}); //.json(rowsUpdated) sends artist, not rows
         }
       })
     }
