@@ -4,6 +4,7 @@ const app = express();
 
 const artistControllers = require("./controllers/artists"); //controller function imported
 const albumControllers = require("./controllers/albums");
+const songControllers = require("./controllers/songs");
 
 app.use(express.json()); //middleware
 
