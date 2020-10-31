@@ -28,5 +28,6 @@ app.delete("/albums/:albumId", albumControllers.deleteAlbum);
 
 // Song routes
 app.post("/albums/:albumId/songs", songControllers.createSong);
+app.get("/songs", songControllers.getSongs);
 
 module.exports = app;

@@ -16,3 +16,18 @@ exports.createSong = (req, res) => {
   })
 
 };
+
+exports.getSongs = (req, res) => {
+  Song.findAll({
+    include: [
+      {
+        model: Artist,
+        as: 'artist'
+      },
+      {
+        model: Album,
+        as: 'album'
+      }
+    ]
+  }).then(songs => res.status(200).json(songs))
+};

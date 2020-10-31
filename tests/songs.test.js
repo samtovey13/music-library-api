@@ -3,9 +3,10 @@ const request = require('supertest');
 const app = require('../src/app');
 const { Song, Artist, Album } = require('../src/models');
 
-describe('/albums', () => {
+describe('/songs', () => {
   let artist;
   let album;
+  let songs;
 
   before(async () => {
     try {
@@ -71,4 +72,57 @@ describe('/albums', () => {
         })
     })
   })
+
+  describe('with songs in the database', () => {
+    beforeEach((done) => {
+      Promise.all([
+        Song.create({
+          artistId: artist.id,
+          albumId: album.id,
+          name: 'Solitude Is Bliss',
+        }),
+        Song.create({
+          artistId: artist.id,
+          albumId: album.id,
+          name: 'Silence Is Golden',
+        }),
+        Song.create({
+          artistId: artist.id,
+          albumId: album.id,
+          name: "Sunny Afternoon"
+        })
+      ]).then((documents) => {
+        songs = documents;
+        done();
+      })
+    });
+    
+
+    describe('GET /songs', () => {
+      it('gets all songs in the database', (done) => {
+        request(app)
+          .get(`/songs`)
+          .then((res) => {
+            expect(res.status).to.equal(200);
+            expect(res.body.length).to.equal(3);
+            res.body.forEach((song) => {
+              const expected = songs.find((s) => s.id === song.id);
+              expect(song.id).to.equal(expected.id);
+              expect(song.name).to.equal(expected.name);
+              expect(song.artist.id).to.equal(artist.id);
+              expect(song.artist.genre).to.equal(artist.genre);
+              expect(song.album.id).to.equal(album.id);
+              expect(song.album.year).to.equal(album.year);
+              expect(typeof song.artist).to.equal('object');
+              expect(typeof song.album).to.equal('object');
+            });
+            done();
+          })
+      })
+    })
+
+
+
+
+  }) //end of decribe('with songs in the database')
 })
