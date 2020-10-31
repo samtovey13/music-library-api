@@ -121,8 +121,36 @@ describe('/songs', () => {
       })
     })
 
+    describe('GET /songs/:songId', () => {
+      it('gets a song by id', (done) => {
+        song = songs[0];
+        request(app)
+          .get(`/songs/${song.id}`)
+          .then(res => {
+            expect(res.status).to.equal(200);
+            expect(res.body.id).to.equal(song.id);
+            expect(res.body.name).to.equal(song.name);
+            expect(res.body.artist.id).to.equal(artist.id);
+            expect(res.body.artist.genre).to.equal(artist.genre);
+            expect(res.body.album.id).to.equal(album.id);
+            expect(res.body.album.year).to.equal(album.year);
+            expect(typeof res.body.artist).to.equal('object');
+            expect(typeof res.body.album).to.equal('object');
+            done();
+          })
+      });
 
+      it('returns a 404 if the song is not found', (done) => {
+        request(app)
+          .get(`/songs/12345`)
+          .then(res => {
+            expect(res.status).to.equal(404);
+            expect(res.body.error).to.equal("The song could not be found.");
+            done();
+          })
+      });
 
+    })
 
   }) //end of decribe('with songs in the database')
 })
