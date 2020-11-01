@@ -6,6 +6,8 @@ const { Song, Artist, Album } = require('../src/models');
 describe('/songs', () => {
   let artist;
   let album;
+  let newArtist;
+  let newAlbum;
   let songs;
 
   before(async () => {
@@ -31,6 +33,14 @@ describe('/songs', () => {
         name: "InnerSpeaker", 
         year: 2010
       }).then(album => album.setArtist(artist));
+      newArtist = await Artist.create({
+        name: 'Another Artist',
+        genre: 'Pop'
+      });
+      newAlbum = await Album.create({
+        name: "Another Album", 
+        year: 2021
+      }).then(album => album.setArtist(newArtist));
     } catch (err) {
       console.log(err);
     }
@@ -94,7 +104,7 @@ describe('/songs', () => {
       ]).then((documents) => {
         songs = documents;
         done();
-      })
+      });
     });
     
 
@@ -150,6 +160,101 @@ describe('/songs', () => {
           })
       });
 
+    })
+
+    describe('PATCH /songs/:songId', () => {
+
+      it('updates song name by id', (done) => {
+        song = songs[0];
+        request(app)
+          .patch(`/songs/${song.id}`)
+          .send({
+            name: 'New Song Name'
+          })
+          .then(res => {
+            expect(res.status).to.equal(200);
+            Song.findByPk(song.id).then(song => {
+              expect(song.name).to.equal('New Song Name');
+              done();
+            })
+          })
+      })
+      it('updates song artist by id', (done) => {
+        song = songs[0];
+        request(app)
+          .patch(`/songs/${song.id}`)
+          .send({
+            artistId: `${newArtist.id}`
+          })
+          .then(res => {
+            expect(res.status).to.equal(200);
+            Song.findByPk(song.id).then(song => {
+              expect(song.artistId).to.equal(newArtist.id);
+              done();
+            })
+          })
+      })
+
+      it('updates song name, artist and album in one request', (done) => {
+        song = songs[0];
+        request(app)
+        .patch(`/songs/${song.id}`)
+        .send({
+          name: 'New Song Name',
+          artistId: `${newArtist.id}`,
+          albumId: `${newAlbum.id}`
+        })
+        .then(res => {
+          expect(res.status).to.equal(200);
+          Song.findByPk(song.id).then(song => {
+            expect(song.name).to.equal('New Song Name');
+            expect(song.artistId).to.equal(newArtist.id);
+            expect(song.albumId).to.equal(newAlbum.id);
+            done();
+          })
+        })
+      })
+
+      it('returns a 404 if the song is not found', (done) => {
+        request(app)
+        .patch(`/songs/12345`)
+        .send({
+          name: 'New Song Name'
+        })
+        .then(res => {
+          expect(res.status).to.equal(404);
+          expect(res.body.error).to.equal("The song could not be found.");
+          done();
+        })
+      })
+
+      it('throws an error if the album does not exist', (done) => {
+        song = songs[0];
+        request(app)
+        .patch(`/songs/${song.id}`)
+        .send({
+          albumId: 99999
+        })
+        .then(res => {
+          expect(res.status).to.equal(404);
+          expect(res.body.error).to.equal("The album could not be found.");
+          done();
+        })
+      })
+
+      it('throws an error if the artist does not exist', (done) => {
+        song = songs[0];
+        request(app)
+        .patch(`/songs/${song.id}`)
+        .send({
+          artistId: 99999
+        })
+        .then(res => {
+          expect(res.status).to.equal(404);
+          expect(res.body.error).to.equal("The artist could not be found.");
+          done();
+        })
+      })
     })
 
   }) //end of decribe('with songs in the database')

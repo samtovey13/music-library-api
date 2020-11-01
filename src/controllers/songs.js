@@ -53,3 +53,45 @@ exports.getSongById = (req, res) => {
     }
   });
 };
+
+exports.updateSong = (req, res) => {
+  const {songId} = req.params;
+  const {albumId, artistId} = req.body;
+
+  // Artist.findByPk(artistId).then((artist) => {
+  //   if (!artist && artistId) {
+  //     res.status(404).json({ error: "The artist could not be found."});
+  //   } else {
+  //     Song.update(req.body, {where: {id: songId}}).then(([rowsUpdated]) => {
+  //       if (!rowsUpdated) {
+  //         res.status(404).json({ error: "The song could not be found."})
+  //       } else {
+  //         res.status(200).json({ result: "Rows were updated"}); //.json(rowsUpdated) sends artist, not rows
+  //       }
+  //     })
+  //   }
+  // })
+
+
+
+
+  Album.findByPk(albumId).then((album) => {
+    if (!album && albumId) {
+      res.status(404).json({ error: "The album could not be found."});
+    } else {
+      Artist.findByPk(artistId).then((artist) => {
+        if (!artist && artistId) {
+          res.status(404).json({ error: "The artist could not be found."});
+        } else {
+          Song.update(req.body, {where: {id: songId}}).then(([rowsUpdated]) => {
+            if (!rowsUpdated) {
+              res.status(404).json({ error: "The song could not be found."})
+            } else {
+              res.status(200).json({ result: "Rows were updated"}); //.json(rowsUpdated) sends artist, not rows
+            }
+          })
+        }
+      }) 
+    }
+  })
+}
