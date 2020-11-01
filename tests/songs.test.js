@@ -257,5 +257,30 @@ describe('/songs', () => {
       })
     })
 
+    describe('DELETE /songs/songId', () => {
+      it('deletes a song by id', (done) => {
+        song = songs[0];
+        request(app)
+        .delete(`/songs/${song.id}`)
+        .then(res => {
+          expect(res.status).to.equal(204);
+          Song.findByPk(song.id).then(result => {
+            expect(result).to.equal(null);
+            done();
+          })
+        })
+      })
+
+      it('returns a 404 if the song does not exist', (done) => {
+        request(app)
+        .delete(`/songs/99999`)
+        .then(res => {
+          expect(res.status).to.equal(404);
+          expect(res.body.error).to.equal("The song could not be found.");
+          done();
+        })
+      })
+    })
+
   }) //end of decribe('with songs in the database')
 })

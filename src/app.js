@@ -31,5 +31,6 @@ app.post("/albums/:albumId/songs", songControllers.createSong);
 app.get("/songs", songControllers.getSongs);
 app.get("/songs/:songId", songControllers.getSongById);
 app.patch("/songs/:songId", songControllers.updateSong);
+app.delete("/songs/:songId", songControllers.deleteSong);
 
 module.exports = app;

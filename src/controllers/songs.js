@@ -78,3 +78,14 @@ exports.updateSong = (req, res) => {
     }
   })
 }
+
+exports.deleteSong = (req, res) => {
+  const {songId} = req.params;
+  Song.destroy({ where: {id: songId} }).then((song) => {
+    if (!song) {
+      res.status(404).json({error: "The song could not be found."})
+    } else {
+      res.status(204).end();
+    }
+  });
+}
