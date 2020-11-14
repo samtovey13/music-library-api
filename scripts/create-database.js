@@ -6,9 +6,11 @@ const args = process.argv.slice(2)[0];
 
 const envFile = args === "test" ? "../.env.test" : "../.env";
 
+if (process.env.NODE_ENV !== 'production') {
 require("dotenv").config({
   path: path.join(__dirname, envFile),
 });
+}
 
 const { DB_PASSWORD, DB_NAME, DB_USER, DB_HOST, DB_PORT } = process.env;
 
