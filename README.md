@@ -30,8 +30,18 @@ Song routes
 - PATCH /songs/:songId
 - DELETE /songs/:songId
 
+# Use the app online
 
-# Setup
+This app is deployed on Heroku at [https://music-library-api-demo.herokuapp.com/].
+
+All routes can be accessed by using Postman. Download and install Postman [here] (https://www.postman.com/downloads/).
+
+Here is an example of a POST request to create a new artist. Make sure to set the body to 'raw' and select JSON as the language.
+
+![Shows API request POST/artists on Postman](https://drive.google.com/uc?export=view&id=1EluxrCNiSl1stifPFtyMrVHlVaz4OGWN)
+
+
+# ... OR, set up a local dev environment
 
 
 ### Install Docker
@@ -63,7 +73,7 @@ If you are able to connect and run queries, then you're ready to move on.
 
 ### Install Postman
 
-Install Postman [here](https://www.postman.com/downloads/)
+Install Postman [here](https://www.postman.com/downloads/).
 
 ### Set up your local repo
 
