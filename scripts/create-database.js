@@ -6,7 +6,7 @@ const args = process.argv.slice(2)[0];
 
 const envFile = args === "test" ? "../.env.test" : "../.env";
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV == 'development') {
 require("dotenv").config({
   path: path.join(__dirname, envFile),
 });
